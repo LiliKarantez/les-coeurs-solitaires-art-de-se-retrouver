@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'art de se retrouver — Les Cœurs Solitaires</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(160deg, #FDE8ED 0%, #F5D0D8 50%, #FDE8ED 100%);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(135deg, #8A2040 0%, #C05070 55%, #E08090 100%);
+    padding: 52px 40px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content:''; position:absolute; top:-80px; right:-80px;
+    width:320px; height:320px; border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,transparent 70%);
+  }
+  .header-brand {
+    font-family:'Cormorant Garamond',serif;
+    font-size:13px; letter-spacing:5px; text-transform:uppercase;
+    color:rgba(255,255,255,0.65); margin-bottom:12px;
+  }
+  header h1 {
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(42px,6vw,72px); font-weight:400;
+    color:white; line-height:1.1;
+  }
+  header h1 em { font-style:italic; }
+  header p { font-size:13px; color:rgba(255,255,255,0.5); margin-top:14px; letter-spacing:2px; }
+
+  .stats {
+    display:flex; justify-content:center; gap:48px;
+    padding:28px 40px; background:white;
+    border-bottom:1px solid rgba(0,0,0,0.06); flex-wrap:wrap;
+  }
+  .stat { text-align:center; }
+  .stat-num { font-family:'Cormorant Garamond',serif; font-size:32px; color:#C05070; display:block; }
+  .stat-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#bbb; margin-top:2px; }
+
+  /* EVENTS BANNER */
+  .events-banner {
+    background: #140810;
+    padding: 24px 32px;
+    text-align: center;
+  }
+  .events-banner h3 {
+    font-family:'Cormorant Garamond',serif;
+    font-size:18px; color:white;
+    letter-spacing:3px; text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .events-grid {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+  }
+  .event-btn {
+    display:inline-block;
+    padding:8px 18px;
+    border-radius:100px;
+    border:1px solid rgba(240,160,176,0.5);
+    color:rgba(255,255,255,0.85);
+    font-family:'Nunito',sans-serif;
+    font-size:12px; font-weight:600;
+    text-decoration:none;
+    transition:all 0.2s;
+    letter-spacing:0.5px;
+  }
+  .event-btn:hover {
+    background:rgba(240,160,176,0.15);
+    border-color:#F0A0B0;
+    color:white;
+  }
+  .event-date { color:#F0A0B0; margin-right:4px; }
+
+  .filters {
+    display:flex; justify-content:center; gap:10px;
+    padding:32px 20px 16px; flex-wrap:wrap;
+  }
+  .filter-btn {
+    padding:10px 24px; border-radius:100px;
+    border:1.5px solid currentColor; background:transparent;
+    cursor:pointer; font-family:'Nunito',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:1px; transition:all 0.2s;
+  }
+  .filter-btn[data-type="all"]         { color:#140810; }
+  .filter-btn[data-type="question"]    { color:#B03060; }
+  .filter-btn[data-type="action"]      { color:#3A7A5A; }
+  .filter-btn[data-type="affirmation"] { color:#9A6A10; }
+  .filter-btn[data-type="joker"]       { color:#5A40A0; }
+  .filter-btn.active,.filter-btn:hover { color:white !important; }
+  .filter-btn[data-type="all"].active,.filter-btn[data-type="all"]:hover         { background:#140810; border-color:#140810; }
+  .filter-btn[data-type="question"].active,.filter-btn[data-type="question"]:hover    { background:#B03060; border-color:#B03060; }
+  .filter-btn[data-type="action"].active,.filter-btn[data-type="action"]:hover      { background:#3A7A5A; border-color:#3A7A5A; }
+  .filter-btn[data-type="affirmation"].active,.filter-btn[data-type="affirmation"]:hover { background:#9A6A10; border-color:#9A6A10; }
+  .filter-btn[data-type="joker"].active,.filter-btn[data-type="joker"]:hover       { background:#5A40A0; border-color:#5A40A0; }
+
+  .count-bar { text-align:center; font-size:12px; color:#bbb; padding-bottom:20px; letter-spacing:1px; }
+
+  .grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:24px; padding:0 32px 64px; max-width:1400px; margin:0 auto;
+  }
+
+  .card-wrap { perspective:1000px; height:620px; cursor:pointer; }
+  .card-inner {
+    width:100%; height:100%; position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.65s cubic-bezier(0.4,0,0.2,1);
+    border-radius:20px;
+  }
+  .card-wrap.flipped .card-inner { transform:rotateY(180deg); }
+  .card-front, .card-back {
+    position:absolute; inset:0; border-radius:20px;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    display:flex; flex-direction:column; overflow:hidden;
+    box-shadow:0 12px 48px rgba(140,30,60,0.2);
+  }
+
+  /* RECTO */
+  .card-front {
+    background:linear-gradient(160deg, #F2A8B8 0%, #DC7090 45%, #A03055 100%);
+    align-items:center; justify-content:center;
+    text-align:center; padding:28px; position:relative;
+  }
+  .card-front::after {
+    content:''; position:absolute; inset:14px;
+    border-radius:10px; border:1px solid rgba(0,0,0,0.2);
+    pointer-events:none;
+  }
+  .front-meta {
+    font-family:'Cormorant Garamond',serif;
+    font-size:13px; letter-spacing:2px; text-transform:uppercase;
+    color:rgba(0,0,0,0.5); margin-bottom:8px;
+    line-height:1.8;
+  }
+  .front-brand {
+    font-family:'Cormorant Garamond',serif;
+    font-size:17px; letter-spacing:4px; text-transform:uppercase;
+    color:rgba(0,0,0,0.6); margin-bottom:14px; font-weight:600;
+  }
+  .front-deco { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:14px; }
+  .front-deco-line { height:1px; width:44px; background:rgba(0,0,0,0.25); }
+  .front-deco-diamond { width:8px; height:8px; background:rgba(0,0,0,0.35); transform:rotate(45deg); }
+  .front-icon { font-size:40px; margin-bottom:12px; display:block; }
+  .front-title { font-family:'Cormorant Garamond',serif; font-size:13px; color:rgba(255,255,255,0.85); letter-spacing:1px; margin-bottom:4px; }
+  .front-title-main { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:28px; color:white; line-height:1.2; margin-bottom:14px; }
+
+  /* Collection sur recto */
+  .front-collection {
+    font-family:'Cormorant Garamond',serif;
+    font-size:10px; color:rgba(0,0,0,0.35);
+    letter-spacing:1px; line-height:1.8;
+    margin-top:6px;
+  }
+
+  /* VERSO */
+  .card-back { transform:rotateY(180deg); background:white; display:flex; flex-direction:column; }
+  .back-top { padding:12px 20px 0; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .type-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .type-question    .type-dot { background:#B03060; }
+  .type-action      .type-dot { background:#3A7A5A; }
+  .type-affirmation .type-dot { background:#9A6A10; }
+  .type-joker       .type-dot { background:#5A40A0; }
+  .type-lbl { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; }
+  .type-question    .type-lbl { color:#B03060; }
+  .type-action      .type-lbl { color:#3A7A5A; }
+  .type-affirmation .type-lbl { color:#9A6A10; }
+  .type-joker       .type-lbl { color:#5A40A0; }
+  .card-num { font-family:'Cormorant Garamond',serif; font-size:14px; color:#ddd; margin-left:auto; }
+
+  .card-body { flex:1; display:flex; flex-direction:column; justify-content:center; padding:12px 22px 8px; }
+  .card-icon { font-size:26px; margin-bottom:10px; display:block; }
+  .card-text { font-family:'Cormorant Garamond',serif; font-size:22px; line-height:1.65; color:#140810; margin-bottom:14px; }
+  .type-question    .card-text em { color:#B03060; font-style:italic; }
+  .type-action      .card-text em { color:#3A7A5A; font-style:italic; }
+  .type-affirmation .card-text em { color:#9A6A10; font-style:italic; }
+  .type-joker       .card-text em { color:#5A40A0; font-style:italic; }
+
+  .ressenti-section {
+    padding: 0 22px 10px;
+    flex-shrink:0;
+    background: #FFF0F4;
+    border-top: 2px solid #C05070;
+    padding-top: 10px;
+  }
+  .ressenti-label {
+    font-family:'Cormorant Garamond',serif;
+    font-size:15px; color:#C05070;
+    font-style:italic; font-weight:600;
+    margin-bottom:8px;
+    display:block;
+  }
+  .stars {
+    display:flex; gap:6px; margin-bottom:8px;
+  }
+  .star {
+    font-size:24px; cursor:pointer;
+    color:#ddd; transition:color 0.15s;
+    line-height:1;
+  }
+  .star.active { color:#C05070; }
+  .ressenti-text {
+    width:100%;
+    border:1.5px solid #C05070;
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:15px;
+    color:#140810;
+    resize:none;
+    height:52px;
+    outline:none;
+    transition:border-color 0.2s;
+    background:white;
+  }
+  .ressenti-text:focus { border-color:#8A2040; }
+  .ressenti-text::placeholder { color:#C0A0A8; font-style:italic; }
+
+  /* FOOTER CARTE */
+  .card-footer {
+    padding:8px 20px 10px;
+    border-top:1px solid rgba(0,0,0,0.05);
+    flex-shrink:0;
+  }
+  .footer-top {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:4px;
+  }
+  .footer-brand {
+    font-family:'Cormorant Garamond',serif;
+    font-size:10px; color:#ccc; letter-spacing:1px;
+  }
+  .footer-num { font-family:'Cormorant Garamond',serif; font-size:12px; color:#ddd; }
+  .footer-legal {
+    font-size:9px; color:#ddd; text-align:center;
+    letter-spacing:0.5px; line-height:1.5;
+    font-family:'Nunito',sans-serif;
+  }
+
+  /* CTA */
+  .cta-section {
+    background:#140810;
+    padding:32px 32px 28px;
+    text-align:center;
+    margin-top:40px;
+  }
+  .cta-section h3 {
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px; color:white;
+    margin-bottom:6px;
+  }
+  .cta-section p {
+    font-size:13px; color:rgba(255,255,255,0.5);
+    margin-bottom:20px; letter-spacing:1px;
+  }
+  .cta-events { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+  .cta-btn {
+    display:inline-block; padding:10px 22px;
+    background:linear-gradient(135deg,#C05070,#8A2040);
+    color:white; border-radius:100px;
+    font-family:'Nunito',sans-serif; font-size:12px; font-weight:700;
+    text-decoration:none; transition:all 0.2s;
+    letter-spacing:0.5px;
+  }
+  .cta-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(192,80,112,0.4); }
+
+  /* FOOTER PAGE */
+  .page-footer {
+    background:#0A0508;
+    padding:28px 32px;
+    text-align:center;
+  }
+  .footer-info {
+    font-family:'Cormorant Garamond',serif;
+    font-size:17px; color:rgba(255,255,255,0.5);
+    line-height:2.2; margin-bottom:16px;
+  }
+  .social-links { display:flex; justify-content:center; gap:20px; margin-bottom:16px; }
+  .social-link {
+    display:flex; align-items:center; gap:8px;
+    color:rgba(255,255,255,0.5); text-decoration:none;
+    font-size:13px; font-family:'Nunito',sans-serif;
+    transition:color 0.2s;
+  }
+  .social-link:hover { color:#F0A0B0; }
+  .social-link svg { width:18px; height:18px; fill:currentColor; }
+  .footer-copy {
+    font-size:11px; color:rgba(255,255,255,0.25);
+    font-family:'Nunito',sans-serif; letter-spacing:1px;
+    line-height:1.8;
+  }
+  .collection-list {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+    margin-top:12px;
+  }
+  .collection-item {
+    font-size:11px; color:rgba(255,255,255,0.3);
+    border:1px solid rgba(255,255,255,0.1);
+    padding:4px 12px; border-radius:100px;
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+  }
+  .collection-item.active { color:#F0A0B0; border-color:rgba(240,160,176,0.3); }
+
+  .card-wrap.hidden { display:none; }
+  @media(max-width:600px){ .grid{padding:0 16px 48px;} .stats{gap:20px;} }
+
+  /* BULLE D'AIDE */
+  .welcome-overlay {
+    position:fixed; inset:0;
+    background:rgba(20,8,16,0.75);
+    display:flex; align-items:center; justify-content:center;
+    z-index:1000;
+    animation: fadeOutOverlay 0.6s ease 5s forwards;
+  }
+  .welcome-box {
+    background:white; border-radius:24px;
+    padding:40px 44px; text-align:center;
+    max-width:440px; width:90%;
+    box-shadow:0 24px 80px rgba(0,0,0,0.3);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1), fadeOutBox 0.5s ease 5s forwards;
+    position:relative;
+  }
+  .welcome-box::before {
+    content:''; position:absolute; inset:0;
+    border-radius:24px; border:2px solid rgba(192,80,112,0.2);
+    pointer-events:none;
+  }
+  .welcome-icon { font-size:52px; margin-bottom:16px; display:block; }
+  .welcome-title {
+    font-family:'Cormorant Garamond',serif;
+    font-size:28px; font-style:italic;
+    color:#140810; margin-bottom:12px;
+  }
+  .welcome-text {
+    font-family:'Cormorant Garamond',serif;
+    font-size:18px; color:#888; line-height:1.8; margin-bottom:20px;
+  }
+  .welcome-text strong { color:#C05070; font-style:italic; }
+  .welcome-progress { height:3px; background:#eee; border-radius:100px; overflow:hidden; }
+  .welcome-progress-bar {
+    height:100%; background:linear-gradient(90deg,#F2A8B8,#C05070);
+    animation: progressBar 5s linear forwards;
+  }
+  .welcome-skip {
+    margin-top:14px; font-size:12px; color:#ccc;
+    cursor:pointer; font-family:'Nunito',sans-serif; letter-spacing:1px;
+  }
+  .welcome-skip:hover { color:#C05070; }
+  @keyframes popIn { from{transform:scale(0.8);opacity:0;} to{transform:scale(1);opacity:1;} }
+  @keyframes fadeOutOverlay { to{opacity:0;pointer-events:none;} }
+  @keyframes fadeOutBox { to{transform:scale(0.95);opacity:0;} }
+  @keyframes progressBar { from{width:0%;} to{width:100%;} }
+</style>
+</head>
+<body>
+
+<div class="welcome-overlay" id="welcomeOverlay">
+  <div class="welcome-box">
+    <span class="welcome-icon">🌸</span>
+    <div class="welcome-title">Bienvenue !</div>
+    <div class="welcome-text">
+      Cliquez sur une carte pour la <strong>retourner</strong>
+      et découvrir son contenu.<br>
+      Utilisez les filtres pour choisir le type de carte.
+    </div>
+    <div class="welcome-progress"><div class="welcome-progress-bar"></div></div>
+    <div class="welcome-skip" onclick="document.getElementById('welcomeOverlay').style.display='none'">Passer ✕</div>
+  </div>
+</div>
+
+<header>
+  <div class="header-brand">Lili Karantez · Les Cœurs Solitaires</div>
+  <h1>L'art de <em>se retrouver</em></h1>
+  <p>52 cartes · Jeu 1</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><span class="stat-num">20</span><span class="stat-label">Questions</span></div>
+  <div class="stat"><span class="stat-num">16</span><span class="stat-label">Actions</span></div>
+  <div class="stat"><span class="stat-num">10</span><span class="stat-label">Affirmations</span></div>
+  <div class="stat"><span class="stat-num">6</span><span class="stat-label">Jokers</span></div>
+</div>
+
+<div class="events-banner">
+  <h3>✦ Prochains événements ✦</h3>
+  <div class="events-grid">
+    <a class="event-btn" href="https://ypl.me/PBl" target="_blank"><span class="event-date">13 mars</span> Dîner · Saint-Brieuc</a>
+    <a class="event-btn" href="https://ypl.me/PBh" target="_blank"><span class="event-date">14 mars</span> Dîner · Lannion</a>
+    <a class="event-btn" href="https://ypl.me/Pya" target="_blank"><span class="event-date">19 mars</span> Dîner · La Baule</a>
+    <a class="event-btn" href="https://ypl.me/Pvl" target="_blank"><span class="event-date">20 mars</span> Dîner · Challans</a>
+    <a class="event-btn" href="https://ypl.me/PxL" target="_blank"><span class="event-date">21 mars</span> Dîner · Les Sables d'Olonne</a>
+    <a class="event-btn" href="https://ypl.me/PWm" target="_blank"><span class="event-date">26 mars</span> Dîner · Vannes</a>
+    <a class="event-btn" href="https://ypl.me/Q1B" target="_blank"><span class="event-date">27 mars</span> Soirée · Brest</a>
+    <a class="event-btn" href="https://ypl.me/PKY" target="_blank"><span class="event-date">2 avril</span> Soirée · Lorient</a>
+    <a class="event-btn" href="https://ypl.me/PUR" target="_blank"><span class="event-date">6 juin</span> Salon · Vannes</a>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-type="all">Toutes (52)</button>
+  <button class="filter-btn" data-type="question">🌸 Questions (20)</button>
+  <button class="filter-btn" data-type="action">✨ Actions (16)</button>
+  <button class="filter-btn" data-type="affirmation">💛 Affirmations (10)</button>
+  <button class="filter-btn" data-type="joker">🃏 Jokers (6)</button>
+</div>
+<div class="count-bar" id="countBar">52 cartes affichées · Cliquez pour retourner</div>
+<div class="grid" id="grid"></div>
+
+<div class="cta-section">
+  <h3>Envie de vivre l'expérience en vrai ?</h3>
+  <p>Rejoignez nos prochains dîners et soirées rencontres</p>
+  <div class="cta-events">
+    <a class="cta-btn" href="https://ypl.me/PBl" target="_blank">13 mars · Saint-Brieuc</a>
+    <a class="cta-btn" href="https://ypl.me/PBh" target="_blank">14 mars · Lannion</a>
+    <a class="cta-btn" href="https://ypl.me/Pya" target="_blank">19 mars · La Baule</a>
+    <a class="cta-btn" href="https://ypl.me/Pvl" target="_blank">20 mars · Challans</a>
+    <a class="cta-btn" href="https://ypl.me/PxL" target="_blank">21 mars · Les Sables d'Olonne</a>
+    <a class="cta-btn" href="https://ypl.me/PWm" target="_blank">26 mars · Vannes</a>
+    <a class="cta-btn" href="https://ypl.me/Q1B" target="_blank">27 mars · Brest</a>
+    <a class="cta-btn" href="https://ypl.me/PKY" target="_blank">2 avril · Lorient</a>
+    <a class="cta-btn" href="https://ypl.me/PUR" target="_blank">6 juin · Salon Vannes</a>
+  </div>
+</div>
+
+<div class="page-footer">
+  <div class="footer-info">
+    Entrepreneure · Auteure · Editrice · Créatrice d'expériences relationnelles<br>
+    <strong style="color:rgba(255,255,255,0.6)">Lili Karantez</strong><br>
+    📍 Centre des Affaires Lorient La Base — 1 rue Étienne d'Orves, 56100 Lorient<br>
+    ✉️ lilikarantez@gmail.com · SIRET : 40149331700069
+  </div>
+  <div class="social-links">
+    <a class="social-link" href="https://www.facebook.com/lili.karantez.3" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Facebook
+    </a>
+    <a class="social-link" href="https://www.instagram.com/lilikarantez/" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      Instagram
+    </a>
+  </div>
+
+  <div class="footer-copy" style="margin-top:16px">
+    © Lili Karantez — Tous droits réservés.<br>
+    Toute reproduction, même partielle, est strictement interdite sans autorisation écrite de l'auteure.
+  </div>
+</div>
+
+<script>
+const cards = [
+  {type:"question",icon:"🌿",text:"Si vous deviez vous décrire à quelqu'un qui ne vous a jamais rencontré, quels trois mots choisiriez-vous… et sont-ils vraiment les vôtres ?"},
+  {type:"question",icon:"🕰️",text:"Quel moment de votre vie avez-vous été le plus pleinement vous-même ? Qu'est-ce qui rendait cela possible ?"},
+  {type:"question",icon:"🌊",text:"Qu'avez-vous mis de côté pour faire plaisir aux autres, et qui vous manque encore aujourd'hui ?"},
+  {type:"question",icon:"🔑",text:"Si votre vie était une maison, quelle pièce est restée fermée depuis trop longtemps ?"},
+  {type:"question",icon:"🌙",text:"Qu'est-ce qui vous tient éveillé(e) la nuit — et est-ce une peur ou un rêve déguisé en peur ?"},
+  {type:"question",icon:"🧭",text:"Quelles valeurs guidaient vos choix à 30 ans ? Lesquelles guident vos choix aujourd'hui ? Qu'est-ce qui a changé ?"},
+  {type:"question",icon:"🌸",text:"Quelle qualité en vous avez-vous longtemps cru être un défaut ?"},
+  {type:"question",icon:"🎭",text:"Quel rôle jouez-vous le plus souvent dans vos relations — et est-ce vraiment le vôtre ?"},
+  {type:"question",icon:"🦋",text:"Si votre vie actuelle était un chapitre d'un roman, quel serait son titre ?"},
+  {type:"question",icon:"🌺",text:"De quoi êtes-vous fier(ère) dans votre façon d'avoir traversé les épreuves de ces dernières années ?"},
+  {type:"question",icon:"🎨",text:"Si vous pouviez vous offrir n'importe quelle expérience demain — sans contrainte d'argent, de temps ou de regard des autres — que choisiriez-vous ?"},
+  {type:"question",icon:"🌻",text:"Quel besoin avez-vous souvent du mal à exprimer, même à ceux qui vous aiment ?"},
+  {type:"question",icon:"💬",text:"Quelle vérité sur vous-même avez-vous mis du temps à accepter, et qui est maintenant une force ?"},
+  {type:"question",icon:"🌈",text:"Quand vous imaginez votre vie dans 5 ans et que vous souriez vraiment — qu'est-ce que vous voyez ?"},
+  {type:"question",icon:"🧩",text:"Qu'est-ce qui vous définit, maintenant que vous n'êtes plus défini(e) par une relation ou un rôle familial ?"},
+  {type:"question",icon:"🎵",text:"Y a-t-il une passion que vous avez abandonnée sur le chemin — et qu'est-ce qui vous retient de la retrouver ?"},
+  {type:"question",icon:"🏔️",text:"Quel défi avez-vous relevé seul(e) et qui vous a surpris(e) de votre propre capacité ?"},
+  {type:"question",icon:"🌹",text:"Qu'est-ce que les gens qui vous aiment vraiment savent de vous, que les autres ne voient pas ?"},
+  {type:"question",icon:"🕊️",text:"Si vous pouviez envoyer une lettre à votre moi d'il y a 20 ans, quelle serait la phrase la plus importante ?"},
+  {type:"question",icon:"✨",text:"Qu'est-ce que le célibat vous a appris sur vous-même que la vie en couple ne vous aurait peut-être pas enseigné ?"},
+  {type:"action",icon:"📝",text:"Ce soir, écrivez <em>3 choses que vous aimez en vous</em> — sans hésitation, sans censure. Gardez ce papier dans votre portefeuille pendant une semaine."},
+  {type:"action",icon:"📞",text:"Appelez quelqu'un qui vous connaît depuis longtemps et demandez-lui : <em>« Quelle qualité en moi te touche le plus ? »</em> Écoutez sans interrompre."},
+  {type:"action",icon:"🚶",text:"Partez en promenade de 30 minutes <em>sans téléphone</em>. Observez ce qui vous attire, ce qui vous touche, ce qui vous fait sourire. Notez-le au retour."},
+  {type:"action",icon:"🎁",text:"Offrez-vous quelque chose que vous remettez à plus tard depuis longtemps — même quelque chose de petit. <em>Aujourd'hui.</em>"},
+  {type:"action",icon:"🖼️",text:"Créez un <em>collage de vos désirs</em> : découpez des images qui représentent la vie que vous voulez. Affichez-le quelque part chez vous."},
+  {type:"action",icon:"🍽️",text:"Invitez quelqu'un à dîner — non pas pour remplir un vide, mais pour <em>partager qui vous êtes aujourd'hui</em>."},
+  {type:"action",icon:"🌄",text:"Demain matin, levez-vous 30 minutes plus tôt. Asseyez-vous avec un café <em>sans écran</em>, et laissez vos pensées du matin se déposer librement."},
+  {type:"action",icon:"🎭",text:"Cette semaine, essayez quelque chose que vous n'avez <em>jamais fait seul(e)</em> : restaurant, cinéma, musée… Notez ce que vous avez ressenti."},
+  {type:"action",icon:"💌",text:"Écrivez une lettre à votre futur moi dans 1 an. <em>Fermez l'enveloppe et fixez une date pour la lire.</em>"},
+  {type:"action",icon:"🧘",text:"Passez 10 minutes à écrire <em>sans lever le stylo</em> sur cette question : « Qui suis-je, maintenant ? » Ne vous relisez pas tout de suite."},
+  {type:"action",icon:"🌿",text:"Identifiez une habitude qui ne vous ressemble plus. <em>Décidez de l'arrêter pour 30 jours</em> et observez ce que cela libère."},
+  {type:"action",icon:"📸",text:"Prenez une photo de vous aujourd'hui — pas pour la publier, mais pour <em>vous regarder avec bienveillance</em>. Qu'est-ce que vous voyez ?"},
+  {type:"action",icon:"🎶",text:"Créez une playlist de <em>10 chansons qui vous ressemblent aujourd'hui</em>. Pas qui vous ressemblaient avant — aujourd'hui."},
+  {type:"action",icon:"🤝",text:"Demandez à la personne en face de vous de vous <em>décrire en 3 mots</em> après 15 minutes de conversation. Comparez avec vos propres mots."},
+  {type:"action",icon:"🌙",text:"Avant de dormir ce soir, listez <em>3 moments de la journée où vous avez été vraiment vous-même</em>. Même de petits moments comptent."},
+  {type:"action",icon:"🧁",text:"Organisez un moment rien que pour vous. Traitez-vous <em>comme vous traiteriez quelqu'un que vous aimez profondément</em>."},
+  {type:"affirmation",icon:"🌟",text:"Je suis entier(ère), maintenant, tel(le) que je suis. <em>Je n'ai pas besoin d'être réparé(e) pour être aimé(e).</em>"},
+  {type:"affirmation",icon:"🌺",text:"Ce que j'ai traversé ne m'a pas brisé(e). <em>Cela m'a rendu(e) plus profond(e), plus vrai(e), plus moi.</em>"},
+  {type:"affirmation",icon:"🦁",text:"J'ai survécu à des jours difficiles. <em>Je suis plus fort(e) que je ne le pense</em>, et cette force est toujours disponible."},
+  {type:"affirmation",icon:"🌊",text:"Je mérite un amour qui me voit vraiment. <em>Et je commence par me voir moi-même.</em>"},
+  {type:"affirmation",icon:"🌸",text:"Mon histoire passée n'est pas ma destination. <em>Je suis libre de choisir qui je deviens.</em>"},
+  {type:"affirmation",icon:"🕊️",text:"Je me libère doucement de ce qui ne m'appartient plus. <em>Je fais de la place pour ce qui vient.</em>"},
+  {type:"affirmation",icon:"💛",text:"Je suis capable d'aimer et d'être aimé(e). <em>Mon cœur n'est pas fermé — il apprend à rouvrir.</em>"},
+  {type:"affirmation",icon:"🌈",text:"Le meilleur de moi ne s'est pas passé. <em>Il m'attend, au carrefour de mes prochains choix.</em>"},
+  {type:"affirmation",icon:"🌻",text:"Je n'ai pas besoin d'être parfait(e) pour être désirable. <em>Mon authenticité est ma plus grande séduction.</em>"},
+  {type:"affirmation",icon:"✨",text:"Aujourd'hui, je choisis de me traiter avec la même <em>douceur et patience</em> que j'offrirais à quelqu'un que j'aime."},
+  {type:"joker",icon:"🃏",text:"Posez cette carte à la personne qui vous a <em>le plus intrigué(e) ce soir</em>. Demandez-lui de répondre à la question de votre choix."},
+  {type:"joker",icon:"🎲",text:"Carte blanche : <em>inventez votre propre question</em> et posez-la à voix haute à quelqu'un de votre choix. La seule règle : soyez sincère."},
+  {type:"joker",icon:"🌀",text:"Échangez cette carte avec quelqu'un qui vous ressemble — puis <em>chacun répond à la carte de l'autre</em>. Comparez vos réponses."},
+  {type:"joker",icon:"🎭",text:"Pour les 5 prochaines minutes, <em>parlez de vous à la troisième personne</em> — comme si vous étiez un personnage de roman. Qu'est-ce que cela révèle ?"},
+  {type:"joker",icon:"🌟",text:"L'animateur(trice) choisit une question au hasard et <em>tout le monde répond en même temps</em> — puis partage."},
+  {type:"joker",icon:"💫",text:"Passez cette carte à votre voisin(e) avec un <em>compliment sincère</em> sur quelque chose que vous avez remarqué chez lui ou elle ce soir."},
+];
+
+const typeLabels={question:"Question",action:"Action",affirmation:"Affirmation",joker:"Joker"};
+const grid=document.getElementById('grid');
+const countBar=document.getElementById('countBar');
+
+function buildCards(){
+  grid.innerHTML='';
+  cards.forEach((c,i)=>{
+    const w=document.createElement('div');
+    w.className='card-wrap'; w.dataset.type=c.type;
+    w.innerHTML=`
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="front-brand">Lili Karantez · Les Cœurs Solitaires</div>
+          <div class="front-deco"><div class="front-deco-line"></div><div class="front-deco-diamond"></div><div class="front-deco-line"></div></div>
+          <span class="front-icon">${c.icon}</span>
+          <div class="front-title">L'art de</div>
+          <div class="front-title-main">se retrouver</div>
+          <div class="front-deco"><div class="front-deco-line"></div><div class="front-deco-diamond"></div><div class="front-deco-line"></div></div>
+          <div class="front-collection">
+            Jeu 1 · L'art de se retrouver &nbsp;|&nbsp; Jeu 2 · L'art de lâcher prise<br>
+            Jeu 3 · L'art de se désirer &nbsp;|&nbsp; Jeu 4 · L'art d'ouvrir son cœur &nbsp;|&nbsp; Jeu 5 · L'art de s'allumer
+          </div>
+        </div>
+        <div class="card-back type-${c.type}">
+          <div class="back-top">
+            <div class="type-dot"></div>
+            <span class="type-lbl">${typeLabels[c.type]}</span>
+            <span class="card-num">${String(i+1).padStart(2,'0')}</span>
+          </div>
+          <div class="card-body">
+            <span class="card-icon">${c.icon}</span>
+            <div class="card-text">${c.text}</div>
+          </div>
+          <div class="ressenti-section">
+            <span class="ressenti-label">Cette carte vous a touché(e) ?</span>
+            <div class="stars" data-card="${i}">
+              <span class="star" data-val="1">★</span>
+              <span class="star" data-val="2">★</span>
+              <span class="star" data-val="3">★</span>
+              <span class="star" data-val="4">★</span>
+              <span class="star" data-val="5">★</span>
+            </div>
+            <textarea class="ressenti-text" placeholder="Notez votre ressenti…" rows="2"></textarea>
+          </div>
+          <div class="card-footer">
+            <div class="footer-top">
+              <span class="footer-brand">Lili Karantez · Les Cœurs Solitaires</span>
+              <span class="footer-num">${String(i+1).padStart(2,'0')}</span>
+            </div>
+            <div class="footer-legal">© Lili Karantez — Reproduction interdite · SIRET 40149331700069</div>
+          </div>
+        </div>
+      </div>`;
+
+    // Flip
+    w.addEventListener('click', e => {
+      if(e.target.classList.contains('star') || e.target.classList.contains('ressenti-text')) return;
+      w.classList.toggle('flipped');
+    });
+
+    // Stars
+    setTimeout(() => {
+      const stars = w.querySelectorAll('.star');
+      stars.forEach(star => {
+        star.addEventListener('click', e => {
+          e.stopPropagation();
+          const val = parseInt(star.dataset.val);
+          stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.val) <= val));
+        });
+      });
+      w.querySelector('.ressenti-text').addEventListener('click', e => e.stopPropagation());
+    }, 0);
+
+    grid.appendChild(w);
+  });
+}
+
+function filterCards(type){
+  let count=0;
+  document.querySelectorAll('.card-wrap').forEach(w=>{
+    const show=type==='all'||w.dataset.type===type;
+    w.classList.toggle('hidden',!show);
+    if(!show)w.classList.remove('flipped');
+    else count++;
+  });
+  const names={all:'cartes',question:'questions',action:'actions',affirmation:'affirmations',joker:'jokers'};
+  countBar.textContent=`${count} ${names[type]} affichée${count>1?'s':''} · Cliquez pour retourner`;
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filterCards(btn.dataset.type);
+  });
+});
+
+buildCards();
+</script>
+</body>
+</html>
